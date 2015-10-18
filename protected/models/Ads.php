@@ -16,6 +16,7 @@
  */
 class Ads extends CActiveRecord
 {
+	public $id,$title,$description,$link,$author,$phone,$price,$read_status,$time_create,$images;
     /**
 	 * @return string the associated database table name
 	 */
@@ -50,7 +51,9 @@ class Ads extends CActiveRecord
 	{
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
-		return array();
+		return array(
+			'images' => array(self::HAS_ONE, 'Images', 'ads_id'),
+		);
 	}
 
 	/**
@@ -101,7 +104,9 @@ class Ads extends CActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
-
+	public function getImages() {
+		return $this->images;
+	}
 	/**
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!

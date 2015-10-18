@@ -39,7 +39,8 @@ class SiteController extends Controller
 	public function actionIndex()
 	{
         $allsite=file_get_html('http://dnepropetrovsk.dnp.olx.ua/nedvizhimost/arenda-kvartir/dolgosrochnaya-arenda-kvartir/' );
-        $all_tr=$allsite->find('table[id="offers_table"]/table');
+        $allads=$allsite->find('table[id="offers_table"]/table');
+        $all_tr=array_reverse($allads);
         foreach($all_tr as $index=>$article) {
                 $title=$article->find('strong',0)->plaintext;
                 $link=$article->find('a',0)->href;
@@ -100,8 +101,44 @@ class SiteController extends Controller
                             }
                         }
                     }
+//                    else break;
                 }
 
             }
+    }
+    /*get all unread ads*/
+    public function actionApi()
+    {
+        $ads=Ads::model()->findAllByAttributes(array('read_status'=>0));
+        if($ads)
+        {
+            foreach($ads as $index=>$ad)
+            {
+                $images=Images::model()->findAllByAttributes(array('ads_id'=>$ad->id));
+                if($images)
+                {
+                    foreach($images as $im)
+                        $ad->images[]=$im->link;
+                }
+            }
+            echo json_encode(array('ads'=>$ads));
+        }
+    }
+    /*mark ads as read*/
+    /*/checkasread?id=40*/
+    public function actionCheckAsRead()
+    {
+        $id=Yii::app()->request->getParam('id');
+        $status='Error';
+        $ads=Ads::model()->findByPk($id);
+        if($ads)
+        {
+            $ads->read_status=1;
+            if($ads->save())
+                $status='Ok';
+            echo json_encode(array('status'=>$status));
+        }
+        else echo json_encode(array('status'=>$status));
+
     }
 }
