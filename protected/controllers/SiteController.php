@@ -136,9 +136,7 @@ class SiteController extends Controller
             $ads->read_status=1;
             if($ads->save())
                 $status='Ok';
-            echo json_encode(array('status'=>$status));
         }
-        else echo json_encode(array('status'=>$status));
-
+        echo json_encode(array('status'=>$status));
     }
 }
